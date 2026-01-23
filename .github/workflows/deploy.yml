@@ -6,12 +6,11 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-1                   # Set this to your region
-  ECR_REPOSITORY: my-node-app             # The name of your ECR repo (not the URL)
-  ECS_SERVICE: my-node-app-service        # The name of your ECS service
-  ECS_CLUSTER: assignment-1-cluster       # The name of your ECS cluster
-  CONTAINER_NAME: my-node-app-container   # The name of the container in the task definition
-
+  AWS_REGION: us-east-1                   
+  ECR_REPOSITORY: my-node-app            
+  ECS_SERVICE: my-node-app-service       
+  ECS_CLUSTER: assignment-1-cluster       
+  CONTAINER_NAME: my-node-app-container  
 jobs:
   deploy:
     name: Deploy
