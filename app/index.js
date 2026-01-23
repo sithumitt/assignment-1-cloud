@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 const PORT = 8080;
 
-// 1. Serve Static Files (This lets the browser find your image)
+// Serve Static Files
 app.use(express.static('public'));
 
 // Configure AWS S3
@@ -25,68 +25,7 @@ app.get('/', (req, res) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Cloud Assignment</title>
-      <style>
-        body {
-          /* 2. Use the local image */
-          background: url('/background.png');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          height: 100vh;
-          margin: 0;
-          padding: 40px;
-          box-sizing: border-box;
-        }
-
-        .content {
-          text-align: left;
-          color: white;
-        }
-
-        h1 {
-          font-size: 3em;
-          margin: 0 0 10px 0;
-          text-shadow: 2px 2px 4px #000000;
-        }
-        
-        h2 {
-          font-size: 2em;
-          margin: 5px 0;
-          font-weight: bold;
-          text-shadow: 2px 2px 4px #000000;
-        }
-
-        form {
-          margin-top: 40px;
-        }
-
-        input[type="file"] {
-          display: block;
-          margin-bottom: 15px;
-          color: white;
-          font-size: 1.2em;
-          font-weight: bold;
-        }
-
-        button {
-          background-color: #2196f3;
-          color: white;
-          border: none;
-          padding: 15px 40px;
-          font-size: 1.5em;
-          font-weight: bold;
-          border-radius: 8px;
-          cursor: pointer;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-          transition: transform 0.2s;
-        }
-
-        button:hover {
-          transform: scale(1.05);
-          background-color: #1976d2;
-        }
-      </style>
+      <link rel="stylesheet" href="/style.css">
     </head>
     <body>
       <div class="content">
