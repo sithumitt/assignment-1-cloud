@@ -140,12 +140,12 @@ resource "aws_ecs_task_definition" "app_task" {
     name      = "my-node-app-container"
     image     = aws_ecr_repository.app_repo.repository_url
     essential = true
+    
     portMappings = [{
       containerPort = 8080
       hostPort      = 8080
     }]
     
-    # --- NEW: LOGGING CONFIGURATION ---
     logConfiguration = {
       logDriver = "awslogs"
       options = {
@@ -154,7 +154,18 @@ resource "aws_ecs_task_definition" "app_task" {
         "awslogs-stream-prefix" = "ecs"
       }
     }
-    # ----------------------------------
+
+    # --- NEW: PASS BUCKET NAME TO APP ---
+    environment = [
+      {
+        name  = "BUCKET_NAME"
+        value = aws_s3_bucket.app_bucket.id # Terraform automatically fills this
+      },
+      {
+        name  = "AWS_REGION"
+        value = "us-east-1"
+      }
+    ]
   }])
 }
 
@@ -185,4 +196,36 @@ output "ecs_service_name" {
 
 output "ecs_cluster_name" {
   value = aws_ecs_cluster.main.name
+}
+
+# --- NEW S3 BUCKET RESOURCES ---
+
+# 1. Create the S3 Bucket (Terraform creates this for you!)
+resource "aws_s3_bucket" "app_bucket" {
+  bucket_prefix = "my-node-app-storage-" 
+  force_destroy = true 
+}
+
+# 2. Grant Permission: Allow the ECS Task to write to the Bucket
+resource "aws_iam_role_policy" "ecs_s3_policy" {
+  name = "ecs_s3_access_policy"
+  role = aws_iam_role.ecs_task_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.app_bucket.arn,
+          "${aws_s3_bucket.app_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
 }
