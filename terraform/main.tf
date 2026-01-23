@@ -97,6 +97,12 @@ resource "aws_ecs_cluster" "main" {
   name = "assignment-1-cluster"
 }
 
+# Create a Log Group in CloudWatch
+resource "aws_cloudwatch_log_group" "app_logs" {
+  name              = "/ecs/my-node-app"
+  retention_in_days = 7
+}
+
 # ------------------------------------------------------------------------------
 # 5. IAM ROLES (Task Execution Role)
 # ------------------------------------------------------------------------------
@@ -132,12 +138,23 @@ resource "aws_ecs_task_definition" "app_task" {
 
   container_definitions = jsonencode([{
     name      = "my-node-app-container"
-    image     = aws_ecr_repository.app_repo.repository_url # Initial placeholder
+    image     = aws_ecr_repository.app_repo.repository_url
     essential = true
     portMappings = [{
       containerPort = 8080
       hostPort      = 8080
     }]
+    
+    # --- NEW: LOGGING CONFIGURATION ---
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = "/ecs/my-node-app"
+        "awslogs-region"        = "us-east-1"
+        "awslogs-stream-prefix" = "ecs"
+      }
+    }
+    # ----------------------------------
   }])
 }
 
