@@ -4,8 +4,6 @@ provider "aws" {
   region = "us-east-1" # You can change this to your preferred region
 }
 
-data "aws_region" "current" {}
-
 # ------------------------------------------------------------------------------
 # 1. NETWORKING (VPC, Subnets, IGW)
 # ------------------------------------------------------------------------------
@@ -152,7 +150,7 @@ resource "aws_ecs_task_definition" "app_task" {
       logDriver = "awslogs"
       options = {
         "awslogs-group"         = "/ecs/my-node-app"
-        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-region"        = "us-east-1"
         "awslogs-stream-prefix" = "ecs"
       }
     }
@@ -172,11 +170,6 @@ resource "aws_ecs_service" "app_service" {
     security_groups  = [aws_security_group.app_sg.id]
     assign_public_ip = true # Required for pulling images in public subnets
   }
-
-  # Ensure the IAM Role permissions are attached before the service starts
-  depends_on = [
-    aws_iam_role_policy_attachment.ecs_task_execution_role_policy
-  ]
 }
 
 # ------------------------------------------------------------------------------
